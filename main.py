@@ -29,7 +29,7 @@ def help_command(message: telebot.types.Message):
     values = message.text.split(' ')
     try:
         if len(values) != 3:
-            raise ConvertException('Неверный формат.')
+            raise ConvertException('Неверный формат. Введите /add <имя_валюты> <ISO код>')
         name, code = values[1::]
     except ConvertException as e:
         bot.send_message(message.chat.id, f'{e}')
