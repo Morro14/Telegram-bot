@@ -42,19 +42,19 @@ def help_command(message: telebot.types.Message):
 def convert(message: telebot.types.Message):
     values = message.text.split(' ')
 
-    try:
-        if len(values) != 3:
-            raise ConvertException('Неверный формат.')
+#    try:
+#        if len(values) != 3:
+#            raise ConvertException('Неверный формат.')
 
-        quote, base, amount = values
-        value = Converter.convert(quote, base, amount)
-    except ConvertException as e:
-        bot.send_message(message.chat.id, f'{e}')
-    except Exception as e:
-        bot.send_message(message.chat.id, f'Не удалось обработать запрос\n{e}')
-    else:
-        text = f'Цена {amount} {quote} в {base}: {value}'
-        bot.send_message(message.chat.id, text)
+    quote, base, amount = values
+    value = Converter.convert(quote, base, amount)
+#    except ConvertException as e:
+#        bot.send_message(message.chat.id, f'{e}')
+#    except Exception as e:
+#        bot.send_message(message.chat.id, f'Не удалось обработать запрос\n{e}')
+#    else:
+    text = f'Цена {amount} {quote} в {base}: {value}'
+    bot.send_message(message.chat.id, text)
 
 
 bot.polling(none_stop=True)

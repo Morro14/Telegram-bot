@@ -1,4 +1,10 @@
-from utilities import Converter
+import json
+import requests
 
-currency_all = get_all_currencies()
-print(currency_all.get('USD'))
+quote_ = 'RUB'
+
+r = requests.get(
+                f"https://free.currconv.com/api/v7/convert?q=USD_{quote_}&compact=ultra&apiKey=ec0d89548ad9ff4620ad")
+quote_to_usd = float(json.loads(r.content)['RUB_USD'])
+
+print(quote_to_usd)

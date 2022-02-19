@@ -24,7 +24,7 @@ class Converter:
     currency_all = get_all_currencies()
 
     @staticmethod
-    def convert(quote: str, base: str, amount):
+    def convert(quote: str, base: str, amount:str):
         quote, base = str.lower(quote), str.lower(base)
         if quote == base:
             raise ConvertException('Валюты не должны совпадать.')
@@ -45,15 +45,21 @@ class Converter:
                 raise ConvertException(f'Не удалось обработать "{base}".')
 
         try:
-            amount_ = float(amount)
+            amount_ = amount.replace(',', '.')
+            amount_ = float(amount_)
         except ValueError:
             raise ConvertException(f'Не удалось обработать количество"{amount}".')
 
         if base_ != 'USD':
             base_to_usd = requests.post(
                 f"http://api.currencylayer.com/live?access_key=5f3f8678366e5935dd728319e90bc512&currencies={base_},USD")
-            usd_to_base = 1 / float(json.loads(base_to_usd.content)['quotes']['USD' + base_])
-            value = round(amount_ / usd_to_base, 6)
+            quote_to_usd = requests.get(
+                f"https://free.currconv.com/api/v7/convert?q=USD_{quote_}&compact=ultra&apiKey=ec0d89548ad9ff4620ad")
+            print(quote_to_usd.content)
+            quote_to_usd = float(json.loads(quote_to_usd.content)['USD_' + quote_])
+            base_to_usd = float(json.loads(base_to_usd.content)['quotes']['USD' + base_])
+            quote_to_base = quote_to_usd / base_to_usd
+            value = round(amount_ / quote_to_base, 6)
             return value
         else:
             r = requests.post(
