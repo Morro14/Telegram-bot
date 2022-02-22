@@ -8,17 +8,17 @@ bot = telebot.TeleBot(token_)
 @bot.message_handler(commands=['start', 'help'])
 def help_command(message: telebot.types.Message):
     bot.send_message(message.chat.id, 'Введите /currency или /cur чтобы вывести список доступных валют.\n '
-                                      '\nДля подсчёта конверсии введите:\n'
+                                      '\nЧтобы узнать стоимость валюты, введите:\n'
                                       '<конвертируемая валюта> <валюта, в которую конвертировать> <сумма>, '
-                                      '\nнапример "рубль доллар 1000" или "usd btc 1".')
+                                      '\nнапример "рубль доллар 1000" или "btc usd 1".')
 
 
 @bot.message_handler(commands=['currency', 'cur'])
 def help_command(message: telebot.types.Message):
-    text = "Доступные валюты:"
+    text = "Валюты, доступные по имени:"
     for key in keys:
         text += f'\n    {key}'
-    text += '\nТакже доступно около 150 других валют, доступных по ISO коду (например "btc usd 100")\n'
+    text += '\nТакже 150 других валют доступно по ISO коду (например "btc usd 100").\n'
     bot.send_message(message.chat.id, text)
 
 
@@ -28,9 +28,9 @@ def convert(message: telebot.types.Message):
     try:
         if len(values) != 3:
             raise ConvertException('Неверный формат.')
-        quote, base, amount = values
+        quote, base, amount = Converter.format_strings(*values)
         value = Converter.convert(quote, base, amount)
-        value = str('{:.5f}'.format(value))
+        value = '{:.5f}'.format(value)
     except ConvertException as e:
         bot.send_message(message.chat.id, f'{e}')
     except Exception as e:
