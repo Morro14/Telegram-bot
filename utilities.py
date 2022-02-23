@@ -20,21 +20,26 @@ currency_all = get_all_currencies()
 class Converter:
 
     @staticmethod
-    def convert(quote: str, base: str, amount: float):
-        if quote == base:
+    def convert(quote: str, base: str, amount: str):
+        try:
+            amount = float(amount.replace(',', '.'))
+        except ValueError:
+            raise ConvertException(f'Не удалось обработать количество"{amount}".')
+
+        if quote.lower() == base.lower():
             raise ConvertException('Валюты не должны совпадать.')
         try:
-            quote_ = keys[quote]
+            quote_ = keys[quote.lower()]
         except KeyError:
-            if currency_all[quote]:
-                quote_ = quote
+            if currency_all[quote.upper()]:
+                quote_ = quote.upper()
             else:
                 raise ConvertException(f'Не удалось обработать "{quote}".')
         try:
-            base_ = keys[base]
+            base_ = keys[base.lower()]
         except KeyError:
-            if currency_all[base]:
-                base_ = base
+            if currency_all[base.upper()]:
+                base_ = base.upper()
             else:
                 raise ConvertException(f'Не удалось обработать "{base}".')
 
@@ -43,19 +48,3 @@ class Converter:
         rate = float(json.loads(r.content)[base_ + '_' + quote_])
         value = round(amount / rate, 5)
         return value
-
-    @staticmethod
-    def format_strings(quote, base, amount):
-        try:
-            amount = float(amount.replace(',', '.'))
-        except ValueError:
-            raise ConvertException(f'Не удалось обработать количество"{amount}".')
-        if quote.lower() in keys:
-            quote = quote.lower()
-        else:
-            quote = quote.upper()
-        if base.lower() in keys:
-            base = base.lower()
-        else:
-            base = base.upper()
-        return quote, base, amount

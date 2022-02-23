@@ -28,15 +28,15 @@ def convert(message: telebot.types.Message):
     try:
         if len(values) != 3:
             raise ConvertException('Неверный формат.')
-        quote, base, amount = Converter.format_strings(*values)
+        quote, base, amount = values
         value = Converter.convert(quote, base, amount)
-        value = '{:.5f}'.format(value)
+
     except ConvertException as e:
         bot.send_message(message.chat.id, f'{e}')
     except Exception as e:
         bot.send_message(message.chat.id, f'Не удалось обработать запрос\n{e}')
     else:
-        text = f'Цена {amount} {quote} в {base}: {value}'
+        text = f'Цена {amount} {quote.lower()} в {base.lower()}: {value}'
         bot.send_message(message.chat.id, text)
 
 
